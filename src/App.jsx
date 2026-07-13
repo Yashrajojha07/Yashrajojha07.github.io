@@ -1064,6 +1064,130 @@ function GdsFlow() {
   );
 }
 
+/* -- Derma AI: one preprocessed dataset feeding three competing approaches -- */
+function MlPipelineDiagram() {
+  return (
+    <div className="diagram">
+      <svg viewBox="0 0 700 300" role="img" aria-label="Derma AI pipeline: a 10-class dermatology dataset flows through preprocessing and augmentation into three model families - a from-scratch sequential CNN, HOG features with a random forest, and six pretrained transfer-learning networks - all scored by the same class-wise evaluation">
+        <Defs />
+        {/* data chain */}
+        <DBox x={20} y={36} w={170} h={46} title="DATASET" sub="10 classes · 6,877 / 1,743" stroke="var(--dg-violet-stroke)" tcolor="var(--dg-violet)" />
+        <DArrow x1={190} y1={59} x2={248} y2={59} />
+        <DBox x={250} y={36} w={170} h={46} title="PREPROCESS" sub="224×224 · [0,1] · brightness" />
+        <DArrow x1={420} y1={59} x2={478} y2={59} />
+        <DBox x={480} y={36} w={200} h={46} title="AUGMENT + RESAMPLE" sub="rotate · zoom · flip · crop" stroke="var(--dg-gold-stroke)" tcolor="var(--dg-gold)" />
+        {/* one balanced dataset fans out to all three approaches */}
+        <line x1={580} y1={82} x2={580} y2={108} style={{ stroke: "var(--dg-stroke2)" }} strokeWidth="1.2" />
+        <line x1={115} y1={108} x2={580} y2={108} style={{ stroke: "var(--dg-stroke2)" }} strokeWidth="1.2" />
+        <line x1={115} y1={108} x2={115} y2={134} style={{ stroke: "var(--dg-stroke2)" }} strokeWidth="1.2" markerEnd="url(#arr)" />
+        <line x1={350} y1={108} x2={350} y2={134} style={{ stroke: "var(--dg-stroke2)" }} strokeWidth="1.2" markerEnd="url(#arr)" />
+        <line x1={580} y1={108} x2={580} y2={134} style={{ stroke: "var(--dg-stroke2)" }} strokeWidth="1.2" markerEnd="url(#arr)" />
+        {/* three model families */}
+        <DBox x={25} y={136} w={180} h={46} title="SEQUENTIAL CNN" sub="conv 32·64·128 · FC 128 · softmax" />
+        <DBox x={260} y={136} w={180} h={46} title="HOG + RANDOM FOREST" sub="9-orient HOG + color hist · 100 trees" />
+        <DBox x={490} y={136} w={180} h={46} title="TRANSFER LEARNING ×6" sub="ResNet-50 · VGG16 · EfficientNetB0 …" stroke="var(--dg-green-stroke)" tcolor="var(--dg-green)" />
+        {/* convergence on a single judging stage */}
+        <DArrow x1={115} y1={182} x2={245} y2={228} />
+        <DArrow x1={350} y1={182} x2={350} y2={228} />
+        <DArrow x1={580} y1={182} x2={455} y2={228} />
+        <DBox x={190} y={230} w={320} h={46} title="CLASS-WISE EVALUATION" sub="accuracy · precision · recall · F1 · confusion matrix" stroke="var(--dg-gold-stroke)" tcolor="var(--dg-gold)" />
+        <text x={350} y={294} textAnchor="middle" style={SubT} fontSize="7.4">best of the field: ResNet-50 · 68.38% validation accuracy</text>
+      </svg>
+      <div className="dg-note">One augmentation-balanced dataset feeds <em>three competing approaches</em> - a from-scratch CNN, a classical HOG + Random-Forest pipeline, and six pretrained networks - all judged by the same class-wise metrics, so the comparison is between models, not data.</div>
+    </div>
+  );
+}
+
+/* -- Derma AI benchmark: every figure as reported, drawn to scale.
+   Deep models rank on the validation set; SVM/KNN report on their own
+   held-out split, so they sit in a separate group, not one leaderboard. -- */
+const ML_DEEP = [
+  { name: "ResNet-50", v: 68.38, train: 89.59, best: true },
+  { name: "EfficientNetB0", v: 53.98 },
+  { name: "VGG16", v: 38.64 },
+  { name: "CNN (from scratch)", v: 30.89 },
+  { name: "MobileNetV2", v: 16.01 },
+  { name: "NASNetMobile", v: 15.72 },
+  { name: "MobileNetV3Small", v: 7.06 },
+];
+const ML_CLASSICAL = [
+  { name: "SVM", v: 33.87, auc: "0.7483" },
+  { name: "KNN", v: 19.7, auc: "0.6016" },
+];
+function MlBenchmarkChart() {
+  const X0 = 140, S = 5;
+  const Row = ({ y, m, tone }) => (
+    <g>
+      <text x={X0 - 10} y={y + 8.5} textAnchor="end" style={{ ...SubT, fill: m.best ? "var(--dg-green)" : "var(--dg-t2)" }} fontSize="8" fontWeight={m.best ? 700 : 400}>{m.name}</text>
+      <rect x={X0} y={y} width={m.v * S} height={10} rx="2" style={{ fill: m.best ? "var(--dg-green)" : tone }} fillOpacity={m.best ? 1 : 0.45} />
+      {m.best ? (
+        <text x={X0 + m.v * S - 7} y={y + 8.5} textAnchor="end" style={{ ...BoxT, fill: "var(--dg-bg)" }} fontSize="8" fontWeight="700">{m.v.toFixed(2)}%</text>
+      ) : (
+        <text x={X0 + m.v * S + 8} y={y + 8.5} style={BoxT} fontSize="8">{m.v.toFixed(2)}%{m.auc && <tspan style={{ fill: "var(--dg-t2)" }} fontSize="7">  ·  ROC AUC {m.auc}</tspan>}</text>
+      )}
+      {m.train && (
+        <>
+          <rect x={X0 + m.v * S} y={y} width={(m.train - m.v) * S} height={10} rx="2" style={{ fill: "none", stroke: "var(--dg-gold-stroke)" }} strokeWidth="1" strokeDasharray="3 3" />
+          <text x={X0 + m.train * S + 8} y={y + 8.5} style={{ ...SubT, fill: "var(--dg-gold)" }} fontSize="7">train {m.train.toFixed(2)}%</text>
+        </>
+      )}
+    </g>
+  );
+  return (
+    <div className="diagram">
+      <svg viewBox="0 0 700 272" role="img" aria-label="Benchmark chart drawn to scale from the reported figures. Validation accuracy: ResNet-50 68.38 percent, best, with a dashed extension to its 89.59 percent training accuracy marking the overfitting gap; EfficientNetB0 53.98; VGG16 38.64; from-scratch CNN 30.89; MobileNetV2 16.01; NASNetMobile 15.72; MobileNetV3Small 7.06. Classical baselines on their own held-out split: SVM 33.87 percent, ROC AUC 0.7483; KNN 19.70 percent, ROC AUC 0.6016">
+        {[0, 25, 50, 75, 100].map((p) => (
+          <g key={p}>
+            <line x1={X0 + p * S} y1={24} x2={X0 + p * S} y2={250} style={{ stroke: "var(--dg-border)" }} strokeWidth="1" strokeDasharray="2 5" />
+            <text x={X0 + p * S} y={264} textAnchor="middle" style={SubT} fontSize="7">{p}{p === 100 ? "%" : ""}</text>
+          </g>
+        ))}
+        <text x={X0} y={16} style={{ ...BoxT, fill: "var(--dg-blue)" }} fontSize="8" fontWeight="700">DEEP MODELS · VALIDATION ACCURACY · 1,743 IMAGES</text>
+        {ML_DEEP.map((m, i) => <Row key={m.name} y={28 + i * 22} m={m} tone="var(--dg-blue)" />)}
+        <text x={X0} y={198} style={{ ...BoxT, fill: "var(--dg-violet)" }} fontSize="8" fontWeight="700">CLASSICAL BASELINES · SEPARATE HELD-OUT SPLIT</text>
+        {ML_CLASSICAL.map((m, i) => <Row key={m.name} y={210 + i * 22} m={m} tone="var(--dg-violet)" />)}
+      </svg>
+      <div className="dg-note">Drawn to scale from the reported figures. The dashed extension on <em>ResNet-50</em> is its 89.59% training accuracy - the overfitting gap made visible instead of footnoted. SVM and KNN sit in their own group because they report accuracy on a separate held-out split, with <em>ROC AUC</em> alongside.</div>
+    </div>
+  );
+}
+
+/* -- Derma AI from-scratch CNN, lights up on scroll (same rig as InitSeq) -- */
+const CNN_STAGES = [
+  ["INPUT", "224×224 · [0,1] normalized"],
+  ["CONV 32", "3×3 · ReLU → 2×2 maxpool"],
+  ["CONV 64", "3×3 · ReLU → 2×2 maxpool"],
+  ["CONV 128", "3×3 · ReLU → 2×2 maxpool"],
+  ["FC 128", "flatten → dense"],
+  ["SOFTMAX", "10-class output"],
+];
+function CnnFlow() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) { el.classList.add("lit"); io.unobserve(el); } });
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div className="gdsflow" ref={ref} aria-label="Sequential CNN architecture">
+      {CNN_STAGES.map((s, i) => (
+        <React.Fragment key={s[0]}>
+          <div className={`gstage ${i === CNN_STAGES.length - 1 ? "last" : ""}`} style={{ transitionDelay: `${i * 110}ms` }}>
+            <div className="gnode" style={{ transitionDelay: `${i * 110}ms` }}>
+              {s[0]}
+              <span className="gtip">{s[1]}</span>
+            </div>
+          </div>
+          {i < CNN_STAGES.length - 1 && <span className="garrow" style={{ transitionDelay: `${i * 110}ms` }}>→</span>}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
 /* ============================================================
    CONTENT DATA (extracted from resume + engineering docs)
    ============================================================ */
@@ -1563,7 +1687,7 @@ export default function App() {
           <div className="section-head">
             <Reveal><span className="eyebrow">03 - Academic Research</span>
               <h2 className="sec-title">IIIT Delhi - from architecture model to signoff.</h2>
-              <p className="sec-sub">Network-on-Chip work under two advisors: the fabric taken through the complete Cadence RTL-to-GDSII flow, and a cycle-accurate simulator for architecture exploration.</p></Reveal>
+              <p className="sec-sub">Network-on-Chip work under two advisors - the fabric taken through the complete Cadence RTL-to-GDSII flow, and a cycle-accurate simulator for architecture exploration - plus a machine-learning course project in medical imaging.</p></Reveal>
           </div>
 
           <CaseStudy
@@ -1622,6 +1746,86 @@ export default function App() {
 [cyc 0043] flit HF routed E→N  lat=`}<span className="v">7</span>{`
 [cyc 0051] pkt#12 delivered     lat=`}<span className="v">14</span>{`
 > latency report ......... `}<span className="k">OK</span></div>
+            </div>
+          </div>
+          </CaseStudy>
+
+          <CaseStudy
+            id="derma-ai"
+            org={<>IIIT Delhi · <a className="plink" href="https://iiitd.ac.in/jainendra" target="_blank" rel="noopener noreferrer">Prof. Jainendra Shukla</a></>}
+            orgTone="res"
+            domain="Machine Learning"
+            title="Derma AI - 10-Class Skin-Condition Classifier"
+            role="A dermatological image classifier built for the Machine Learning course: 10 skin-condition classes, an imbalanced real-world dataset, and a systematic comparison of classical machine learning against modern transfer-learning architectures."
+            impact="10 condition classes · 6 pretrained CNNs + classical baselines evaluated · ResNet-50 best at 68.38% validation accuracy"
+            summary="Can a network tell melanoma from eczema? 10 skin-condition classes and 8,620 dermatology images from repositories including ISIC and DermNet, heavy class imbalance handled with augmentation and resampling - and a wide comparison: six pretrained architectures, a from-scratch CNN, and classical baselines, with the overfitting gap reported rather than hidden."
+            tags={["CNN", "Transfer Learning", "ResNet-50", "HOG + Random Forest", "SVM · KNN", "Data Augmentation"]}
+          >
+          <div className="cs-wrap">
+            <div className="cs-head">
+              <span className="cs-id">IIIT Delhi · Machine Learning Coursework · ISIC · DermNet · Mendeley</span>
+              <div className="cs-meta">
+                <div className="m">Condition classes<b>10</b></div>
+                <div className="m">Training set<b>6,877 images</b></div>
+                <div className="m">Validation set<b>1,743 images</b></div>
+                <div className="m">Best model<b>ResNet-50</b></div>
+                <div className="m">Validation accuracy<b>68.38%</b></div>
+              </div>
+            </div>
+            <div className="cs-body">
+              <div className="cs-sec">
+                <div className="cs-label">Problem</div>
+                <p>Dermatological diagnosis is manual, subjective, and unevenly available - and the conditions that matter most are the hardest to call by eye. The task: classify <b>10 skin conditions</b> - eczema and acne through melanoma - from images that vary in skin tone, lighting, and image quality, on a dataset where <b>the rare, dangerous classes are exactly the underrepresented ones</b>.</p>
+              </div>
+
+              <div className="cs-sec">
+                <div className="cs-label">Pipeline - one dataset, three approaches</div>
+                <MlPipelineDiagram />
+              </div>
+
+              <div className="cs-sec">
+                <div className="cs-label">Methodology - key decisions</div>
+                <div className="dec-grid">
+                  <div className="dec"><div className="dt">Imbalance treated at the data layer</div><div className="dd">Eczema-heavy, melanoma-poor: augmentation (rotation, zoom, flip, crop) and resampling rebalanced the training set, with <span className="mono">224×224</span> resizing, <span className="mono">[0,1]</span> normalization, and brightness/contrast adjustment applied for consistency across models.</div></div>
+                  <div className="dec"><div className="dt">Classical baselines kept in the race</div><div className="dd">HOG features (<span className="mono">9 orientations · 8×8 px cells · 2×2 blocks</span>) fused with color histograms into a 100-tree Random Forest, alongside SVM and KNN - so the deep-learning gains are measured against a real floor: SVM <b>33.87%</b> (ROC AUC 0.7483), KNN <b>19.70%</b>.</div></div>
+                  <div className="dec"><div className="dt">Transfer learning as a sweep, not a pick</div><div className="dd">Six pretrained architectures evaluated on the same 10-class task. Depth won - ResNet-50 reached <b>68.38%</b> validation while the lightweight mobile models (MobileNetV2/V3Small, NASNetMobile) stayed below 20% - a negative result recorded, not discarded.</div></div>
+                  <div className="dec"><div className="dt">Overfitting reported, not hidden</div><div className="dd">ResNet-50's <span className="mono">89.59%</span> train vs <span className="mono">68.38%</span> validation gap is flagged in the analysis, and the confusion matrix traces the misses: Herpes HPV, vascular tumors, and melanoma confuse one another where features overlap and training data is thinnest.</div></div>
+                </div>
+              </div>
+
+              <div className="cs-sec">
+                <div className="cs-label">The from-scratch floor - Sequential CNN</div>
+                <CnnFlow />
+                <p style={{ marginTop: "1.1rem" }}>Trained with <b>Adam</b> on categorical cross-entropy for 20 epochs with early stopping, it managed <span className="mono">26.77%</span> train / <span className="mono">30.89%</span> validation - and it stayed in the benchmark anyway, because a from-scratch floor is what makes the transfer-learning margin measurable rather than assumed.</p>
+              </div>
+
+              <div className="cs-sec">
+                <div className="cs-label">Model benchmark - measured, not asserted</div>
+                <MlBenchmarkChart />
+              </div>
+
+              <div className="cs-sec">
+                <div className="cs-label">Evaluation - read class-wise, not just top-line</div>
+                <ul className="val-list">
+                  <li><b>Metrics beyond accuracy:</b> precision, recall, and F1-score evaluated per class, not just as a single headline number.</li>
+                  <li><b>Confusion matrix:</b> diagonal-dominant overall, with residual confusion concentrated in rare categories like vascular tumors and melanoma.</li>
+                  <li><b>Class-wise reading:</b> high precision on balanced classes such as eczema and psoriasis; lower recall exactly where training data is thinnest.</li>
+                  <li><b>Separability beyond accuracy:</b> the classical baselines carry ROC AUC alongside raw accuracy - ranking quality, not just correctness.</li>
+                </ul>
+              </div>
+
+              <div className="cs-sec">
+                <div className="cs-label">Outcome</div>
+                <div className="mstrip">
+                  <div className="ms"><b>10</b><span>condition classes</span></div>
+                  <div className="ms"><b>6,877</b><span>training images</span></div>
+                  <div className="ms"><b>1,743</b><span>validation images</span></div>
+                  <div className="ms"><b>68.38%</b><span>best validation</span></div>
+                  <div className="ms"><b>89.59%</b><span>ResNet-50 training</span></div>
+                  <div className="ms"><b>224×224</b><span>model input</span></div>
+                </div>
+                <div className="tags" style={{ marginTop: "1.1rem" }}>{["CNN", "Transfer Learning", "ResNet-50", "EfficientNetB0", "VGG16", "HOG Features", "Random Forest", "SVM", "KNN", "Data Augmentation", "Confusion-Matrix Analysis"].map((t) => <span className="tag" key={t}>{t}</span>)}</div>
+              </div>
             </div>
           </div>
           </CaseStudy>
