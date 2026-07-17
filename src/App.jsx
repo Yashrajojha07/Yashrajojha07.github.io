@@ -12,7 +12,7 @@ const STYLES = `
 .yro *{box-sizing:border-box;margin:0;padding:0}
 .yro{
   --bg:#131314; --surface:#1E1F20; --line:#37393B; --line2:rgba(55,57,59,.6);
-  --cyan:#8AB4F8; --phos:#81C995; --violet:#C58AF9;
+  --cyan:#8AB4F8; --phos:var(--violet); --violet:#C58AF9;
   --gold:#FDD663; --red:#F28B82; --t1:#E8EAED; --t2:#9AA0A6;
   --card:#18191B; --cell:#161719; --onfill:#202124;
   --elev-1:none; --elev-2:none; /* dark elevation = tone+border, not shadow */
@@ -60,9 +60,9 @@ const STYLES = `
 .nav-links a.active{color:var(--cyan)}
 .nav-links a.active::after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
 /* selector must out-rank .nav-links a, which otherwise overrides font/padding */
-.nav-links a.nav-cta,.nav-cta{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.72rem;line-height:1;padding:.6rem 1.15rem;border:1px solid rgba(129,201,149,.35);border-radius:999px;color:var(--phos)!important;transition:.2s}
-.nav-links a.nav-cta:hover,.nav-cta:hover{background:rgba(129,201,149,.08)}
-.nav-links a.nav-cta:active,.nav-cta:active{background:rgba(129,201,149,.14)}
+.nav-links a.nav-cta,.nav-cta{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.72rem;line-height:1;padding:.6rem 1.15rem;border:1px solid rgba(197,138,249,.35);border-radius:999px;color:var(--phos)!important;transition:.2s}
+.nav-links a.nav-cta:hover,.nav-cta:hover{background:rgba(197,138,249,.08)}
+.nav-links a.nav-cta:active,.nav-cta:active{background:rgba(197,138,249,.14)}
 .burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:6px}
 .burger span{width:24px;height:2px;background:var(--t1);transition:.3s}
 .burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
@@ -100,22 +100,26 @@ const STYLES = `
 .hero-proof .hp b{display:block;font-size:1.05rem;color:var(--cyan);font-weight:700;letter-spacing:0}
 
 /* chip die (baseline, kept) */
-.die-scene{perspective:1400px;display:flex;justify-content:center;align-items:center}
-.die{position:relative;width:min(390px,78vw);height:min(390px,78vw);transform-style:preserve-3d;animation:dieSpin 20s ease-in-out infinite}
+.die-scene{perspective:1400px;display:flex;justify-content:center;align-items:center;position:relative}
+/* ambient bounce light off the PCB beneath the chip - not the chip emitting
+   light. Deliberately underpowered: a floor-level glow, not a halo. */
+.die-glow{position:absolute;left:50%;top:57%;transform:translate(-50%,-50%);width:min(430px,86vw);height:min(220px,44vw);background:radial-gradient(ellipse at center,rgba(138,180,248,.19) 0%,rgba(138,180,248,.075) 55%,rgba(138,180,248,0) 78%);filter:blur(70px);pointer-events:none;z-index:0;animation:dieGlowBreathe 13s ease-in-out infinite}
+@keyframes dieGlowBreathe{0%,100%{opacity:.94}50%{opacity:1}}
+.die{position:relative;z-index:1;width:min(390px,78vw);height:min(390px,78vw);transform-style:preserve-3d;animation:dieSpin 20s ease-in-out infinite}
 .die:hover{animation-play-state:paused}
 @keyframes dieSpin{0%,100%{transform:rotateX(52deg) rotateZ(-22deg)}50%{transform:rotateX(52deg) rotateZ(22deg)}}
-.die-face{position:absolute;inset:0;background:linear-gradient(135deg,#1A1B1D,#151618);border:1px solid var(--line);border-radius:10px;box-shadow:0 0 0 1px rgba(138,180,248,.08),inset 0 0 60px rgba(138,180,248,.04),0 40px 80px rgba(0,0,0,.6);display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:6px;padding:16px}
-.die-face::before{content:'';position:absolute;inset:6px;border:1px solid rgba(138,180,248,.1);border-radius:6px;pointer-events:none}
-.block{border:1px solid rgba(138,180,248,.16);border-radius:4px;background:rgba(138,180,248,.03);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.5rem;color:var(--t2);letter-spacing:.04em;position:relative;transition:.22s;cursor:default}
+.die-face{position:absolute;inset:0;background:linear-gradient(135deg,#202124,#1A1B24);border:1px solid var(--line);border-radius:10px;box-shadow:0 0 0 1px rgba(138,180,248,.12),inset 0 0 60px rgba(138,180,248,.055),0 40px 80px rgba(0,0,0,.6);display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:6px;padding:16px}
+.die-face::before{content:'';position:absolute;inset:6px;border:1px solid rgba(138,180,248,.14);border-radius:6px;pointer-events:none}
+.block{border:1px solid rgba(138,180,248,.21);border-radius:4px;background:rgba(138,180,248,.035);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.5rem;color:var(--t2);letter-spacing:.04em;position:relative;transition:.22s;cursor:default}
 .block:hover{background:rgba(138,180,248,.14);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 18px rgba(138,180,248,.4);z-index:5}
 .block .tip{position:absolute;bottom:118%;left:50%;transform:translateX(-50%) scale(.9);background:var(--surface);border:1px solid var(--cyan);color:var(--cyan);font-size:.6rem;white-space:nowrap;padding:.25rem .55rem;border-radius:5px;opacity:0;pointer-events:none;transition:.2s}
 .block:hover .tip{opacity:1;transform:translateX(-50%) scale(1)}
-.die-core{grid-column:3/5;grid-row:3/5;background:rgba(129,201,149,.06);border-color:rgba(129,201,149,.3)}
-.die-core:hover{background:rgba(129,201,149,.16);border-color:var(--phos);color:var(--phos);box-shadow:0 0 22px rgba(129,201,149,.4)}
+.die-core{grid-column:3/5;grid-row:3/5;background:rgba(197,138,249,.06);border-color:rgba(197,138,249,.3)}
+.die-core:hover{background:rgba(197,138,249,.16);border-color:var(--phos);color:var(--phos);box-shadow:0 0 22px rgba(197,138,249,.4)}
 .die-pins{position:absolute;display:flex;gap:5px}
 .die-pins.top{top:-9px;left:16px;right:16px;justify-content:space-around}
 .die-pins.bot{bottom:-9px;left:16px;right:16px;justify-content:space-around}
-.die-pins i{width:5px;height:9px;background:linear-gradient(var(--cyan),transparent);border-radius:2px;opacity:.5}
+.die-pins i{width:5px;height:9px;background:linear-gradient(var(--cyan),transparent);border-radius:2px;opacity:.55}
 
 /* ---------- about ---------- */
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start}
@@ -162,7 +166,7 @@ const STYLES = `
 .dec .dd{color:var(--t2);font-size:.88rem}
 .dec .dd .mono{font-family:var(--mono);font-size:.86em;color:var(--cyan)}
 .tags{display:flex;flex-wrap:wrap;gap:.4rem}
-.tag{font-family:var(--mono);font-size:.66rem;padding:.26rem .58rem;border-radius:5px;background:rgba(129,201,149,.06);border:1px solid rgba(129,201,149,.18);color:var(--phos)}
+.tag{font-family:var(--mono);font-size:.66rem;padding:.26rem .58rem;border-radius:5px;background:rgba(197,138,249,.06);border:1px solid rgba(197,138,249,.18);color:var(--phos)}
 
 /* progressive-disclosure project cards - 15-second scan, full depth on demand */
 .pcard{position:relative;border:1px solid var(--line);border-radius:16px;background:linear-gradient(170deg,rgba(30,31,32,.85),rgba(19,19,20,.9));overflow:hidden;transition:border-color .25s}
@@ -172,7 +176,7 @@ const STYLES = `
 .pc-head{padding:1.9rem 2.2rem}
 .pc-meta{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
 .pc-org{font-family:var(--mono);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;border:1px solid;border-radius:999px;padding:.24rem .75rem;white-space:nowrap}
-.pc-org.ind{color:var(--phos);border-color:rgba(129,201,149,.3);background:rgba(129,201,149,.05)}
+.pc-org.ind{color:var(--phos);border-color:rgba(197,138,249,.3);background:rgba(197,138,249,.05)}
 .pc-org.res{color:var(--violet);border-color:rgba(197,138,249,.3);background:rgba(197,138,249,.05)}
 .pc-domain{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--t2)}
 .pc-title{font-family:var(--disp);font-weight:700;font-size:clamp(1.35rem,2.6vw,1.85rem);letter-spacing:-.02em;margin:.9rem 0 .45rem}
@@ -241,7 +245,7 @@ const STYLES = `
 .gdsflow.lit .gstage{opacity:1}
 .gnode{width:100%;text-align:center;font-family:var(--mono);font-size:.6rem;letter-spacing:.03em;padding:.5rem .2rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);transition:border-color .45s,box-shadow .45s,color .45s;cursor:default;position:relative}
 .gdsflow.lit .gstage .gnode{border-color:rgba(138,180,248,.35);color:var(--cyan)}
-.gdsflow.lit .gstage.last .gnode{border-color:var(--phos);color:var(--phos);box-shadow:0 0 16px rgba(129,201,149,.3)}
+.gdsflow.lit .gstage.last .gnode{border-color:var(--phos);color:var(--phos);box-shadow:0 0 16px rgba(197,138,249,.3)}
 .gnode .gtip{position:absolute;bottom:120%;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--surface);border:1px solid var(--cyan);color:var(--cyan);font-size:.58rem;padding:.2rem .5rem;border-radius:4px;opacity:0;pointer-events:none;transition:.2s;z-index:5}
 .gnode:hover .gtip{opacity:1}
 .garrow{align-self:center;color:var(--line);font-size:.7rem;padding:0 .2rem;margin-top:-.2rem;transition:color .45s}
@@ -257,13 +261,13 @@ const STYLES = `
 .skrow{display:flex;align-items:center;gap:1rem;padding:.5rem .2rem;border-bottom:1px solid var(--line2)}
 .skrow .name{flex:1;font-size:.9rem;color:var(--t1);min-width:0}
 .skrow .tier{font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;padding:.12rem .45rem;border-radius:4px;white-space:nowrap}
-.tier.e{color:var(--phos);background:rgba(129,201,149,.08);border:1px solid rgba(129,201,149,.25)}
+.tier.e{color:var(--phos);background:rgba(197,138,249,.08);border:1px solid rgba(197,138,249,.25)}
 .tier.p{color:var(--cyan);background:rgba(138,180,248,.07);border:1px solid rgba(138,180,248,.2)}
 .tier.f{color:var(--t2);background:rgba(154,160,166,.06);border:1px solid rgba(154,160,166,.2)}
 .scope{width:118px;height:32px;flex:none;background:#0E0F10;border:1px solid var(--line);border-radius:5px}
 .scope polyline.grid{stroke:rgba(138,180,248,.06);stroke-width:1}
 .scope polyline.trace{fill:none;stroke:var(--phos);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;opacity:.4;stroke-dasharray:100;stroke-dashoffset:0}
-.skrow:hover .trace{opacity:1;filter:drop-shadow(0 0 3px rgba(129,201,149,.7));animation:draw .8s ease-out}
+.skrow:hover .trace{opacity:1;filter:drop-shadow(0 0 3px rgba(197,138,249,.7));animation:draw .8s ease-out}
 @keyframes draw{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
 
 /* education (kept) */
@@ -302,12 +306,12 @@ const STYLES = `
 .fig-cap{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:.7rem 1rem;border-top:1px solid var(--line);font-family:var(--mono);font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;color:var(--t2)}
 .fig-cap b{color:var(--cyan);font-weight:500;white-space:nowrap}
 .tl{position:relative;list-style:none;margin-bottom:3.2rem}
-.tl::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,rgba(138,180,248,.5),rgba(129,201,149,.5))}
+.tl::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,rgba(138,180,248,.5),rgba(197,138,249,.5))}
 .tl-item{position:relative;padding:0 0 2.3rem 2.3rem}
 .tl-item:last-child{padding-bottom:0}
 .tl-item::before{content:'';position:absolute;left:2px;top:.28rem;width:12px;height:12px;border-radius:4px;background:var(--bg);border:2px solid var(--cyan);box-shadow:0 0 12px rgba(138,180,248,.45)}
 .tl-item.gold::before{border-color:var(--gold);box-shadow:0 0 12px rgba(253,214,99,.45)}
-.tl-item.last::before{border-color:var(--phos);box-shadow:0 0 12px rgba(129,201,149,.5)}
+.tl-item.last::before{border-color:var(--phos);box-shadow:0 0 12px rgba(197,138,249,.5)}
 .tl-yr{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.12em;color:var(--cyan)}
 .tl-item.gold .tl-yr{color:var(--gold)}
 .tl-item.last .tl-yr{color:var(--phos)}
@@ -334,7 +338,7 @@ const STYLES = `
 /* contact (kept) */
 .contact{text-align:center}
 .contact h2{font-family:var(--disp);font-weight:700;font-size:clamp(1.9rem,4.5vw,3rem);letter-spacing:-.02em}
-.pill{display:inline-flex;gap:.5rem;align-items:center;font-family:var(--mono);font-size:.76rem;color:var(--phos);background:rgba(129,201,149,.06);border:1px solid rgba(129,201,149,.2);border-radius:999px;padding:.5rem 1.1rem;margin:1.2rem 0 .3rem}
+.pill{display:inline-flex;gap:.5rem;align-items:center;font-family:var(--mono);font-size:.76rem;color:var(--phos);background:rgba(197,138,249,.06);border:1px solid rgba(197,138,249,.2);border-radius:999px;padding:.5rem 1.1rem;margin:1.2rem 0 .3rem}
 .contact .sub{color:var(--t2);max-width:56ch;margin:.4rem auto 2.4rem}
 .cc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;max-width:760px;margin:0 auto}
 .cc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1.5rem 1.2rem;transition:.25s;display:block}
@@ -373,7 +377,7 @@ const STYLES = `
    dark by design - instrument screens embedded in a light page. */
 .yro.light{
   --bg:#FFFFFF; --surface:#F8F9FA; --line:#DADCE0; --line2:#E8EAED;
-  --cyan:#1A73E8; --phos:#188038; --violet:#8430CE;
+  --cyan:#1A73E8; --phos:var(--violet); --violet:#8430CE;
   --gold:#B06000; --red:#D93025; --t1:#202124; --t2:#5F6368;
   --card:#F8F9FA; --cell:#FFFFFF; --onfill:#FFFFFF;
   /* light elevation = shadow (Google elevation curves); dark keeps tone+border */
@@ -398,7 +402,7 @@ const STYLES = `
 .yro.light ::selection{background:rgba(26,115,232,.18);color:#202124}
 .yro.light .nav.scrolled{background:rgba(255,255,255,.85)}
 .yro.light .overlay{background:rgba(255,255,255,.97)}
-.yro.light .nav-cta{border-color:rgba(24,128,56,.45)}
+.yro.light .nav-cta{border-color:rgba(132,48,206,.45)}
 .yro.light .cs-wrap{background:var(--surface)}
 .yro.light .dec{background:#FFFFFF}
 .yro.light .tl-award{border-color:rgba(227,116,0,.45);background:rgba(227,116,0,.04)}
@@ -408,14 +412,14 @@ const STYLES = `
 /* terminals keep their original dark readout colors (they are instruments, not chrome) */
 .yro.light .term-bar{background:#1E1F20;border-color:#37393B}
 .yro.light .term-bar span{color:#9AA0A6}
-.yro.light .term-body .cmd{color:#81C995}
+.yro.light .term-body .cmd{color:#C58AF9}
 .yro.light .term-body .cmd::before{color:#8AB4F8}
 .yro.light .term-body .out{color:#E8EAED}
 .yro.light .term-body .dim{color:#9AA0A6}
 .yro.light .term-body .hl{color:#FDD663}
-.yro.light .term-cursor{background:#81C995}
+.yro.light .term-cursor{background:#C58AF9}
 .yro.light .miniterm{color:#9AA0A6}
-.yro.light .miniterm .k{color:#81C995}
+.yro.light .miniterm .k{color:#C58AF9}
 .yro.light .miniterm .v{color:#8AB4F8}
 /* light-theme waveforms: approved blue/white scope design */
 .yro.light .scope{background:#F8FBFF;border-color:#D8E7FF;transition:background .2s,border-color .2s,box-shadow .2s}
@@ -457,6 +461,47 @@ const STYLES = `
   .rmodal-title{display:none}
 }
 
+/* ---------- recruiter notes: edge tab + drawer ---------- */
+.rq-trigger{position:fixed;top:50%;right:0;transform:translateY(-50%);z-index:40;display:flex;align-items:center;gap:.6rem;padding:1.1rem .68rem;background:linear-gradient(180deg,rgba(197,138,249,.16),rgba(197,138,249,.06));border:1px solid rgba(197,138,249,.5);border-right:0;border-radius:12px 0 0 12px;color:var(--violet);font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;writing-mode:vertical-rl;cursor:pointer;box-shadow:-6px 0 26px rgba(0,0,0,.35),0 0 20px rgba(197,138,249,.18);transition:padding .25s,box-shadow .25s,border-color .25s,background .25s;animation:rqPulse 26s ease-in-out infinite}
+.rq-trigger:hover{padding-right:1.05rem;border-color:rgba(197,138,249,.8);background:linear-gradient(180deg,rgba(197,138,249,.24),rgba(197,138,249,.1));box-shadow:-8px 0 34px rgba(0,0,0,.4),0 0 30px rgba(197,138,249,.4)}
+.rq-trigger:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.rq-trigger i{width:6px;height:6px;border-radius:50%;background:var(--violet);box-shadow:0 0 9px var(--violet);flex:none}
+@keyframes rqPulse{0%,92%,100%{box-shadow:-6px 0 26px rgba(0,0,0,.35),0 0 20px rgba(197,138,249,.18)}96%{box-shadow:-6px 0 26px rgba(0,0,0,.35),0 0 34px rgba(197,138,249,.6)}}
+.yro.light .rq-trigger{background:linear-gradient(180deg,rgba(132,48,206,.12),rgba(132,48,206,.04));border-color:rgba(132,48,206,.45);box-shadow:-6px 0 26px rgba(32,33,36,.15),0 0 16px rgba(132,48,206,.18)}
+.yro.light .rq-trigger:hover{border-color:rgba(132,48,206,.7);background:linear-gradient(180deg,rgba(132,48,206,.18),rgba(132,48,206,.07));box-shadow:-8px 0 30px rgba(32,33,36,.18),0 0 26px rgba(132,48,206,.35)}
+.yro.light .rq-trigger i{box-shadow:0 0 9px rgba(132,48,206,.7)}
+
+.rdrawer-backdrop{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+.rdrawer-backdrop.open{opacity:1;pointer-events:auto}
+.yro.light .rdrawer-backdrop{background:rgba(32,33,36,.4)}
+.rdrawer{position:fixed;top:0;right:0;bottom:0;z-index:81;width:min(460px,92vw);display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--line);box-shadow:-30px 0 80px rgba(0,0,0,.5);transform:translateX(100%);visibility:hidden;transition:transform .4s cubic-bezier(.2,.7,.3,1),visibility 0s .4s}
+.rdrawer.open{transform:translateX(0);visibility:visible;transition:transform .4s cubic-bezier(.2,.7,.3,1)}
+.yro.light .rdrawer{box-shadow:-24px 0 70px rgba(32,33,36,.25)}
+.rdrawer-head{position:sticky;top:0;z-index:2;background:var(--card);border-bottom:1px solid var(--line);padding:1.35rem 1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.rdrawer-head h2{font-family:var(--disp);font-weight:700;font-size:1.28rem;letter-spacing:-.01em}
+.rdrawer-head p{color:var(--t2);font-size:.82rem;margin-top:.4rem;max-width:30ch}
+.rdrawer-x{width:36px;height:36px;flex:none;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--t1);font-size:1.3rem;line-height:1;cursor:pointer;transition:color .2s,border-color .2s}
+.rdrawer-x:hover{border-color:var(--red);color:var(--red)}
+.rdrawer-body{flex:1;overflow-y:auto;padding:1.5rem}
+.rq-section{margin-bottom:1.8rem}
+.rq-section:last-child{margin-bottom:0}
+.rq-section .cs-label{margin-bottom:.75rem}
+.rq-list{display:flex;flex-direction:column;gap:.7rem}
+.rq-list .dec .dt{font-size:.92rem}
+.rq-list .dec .dd{font-size:.86rem}
+.rdrawer-foot{border-top:1px solid var(--line);padding:1.15rem 1.5rem;display:flex;gap:.6rem;flex-wrap:wrap;flex:none}
+/* below 1300px the hero's die illustration can reach close enough to the
+   viewport edge that the vertical edge-tab risks overlapping it - drop to
+   the compact corner pill well before that gets tight, not just on mobile */
+@media(max-width:1300px){
+  .rq-trigger{top:auto;bottom:1.1rem;right:1.1rem;transform:none;writing-mode:horizontal-tb;border-radius:999px;padding:.72rem 1.2rem;box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 20px rgba(197,138,249,.25);animation:none}
+  .rq-trigger:hover{padding-right:1.2rem}
+  .yro.light .rq-trigger{box-shadow:0 12px 32px rgba(32,33,36,.3),0 0 18px rgba(132,48,206,.3)}
+}
+@media(max-width:940px){
+  .rdrawer{width:100vw}
+}
+
 @media(max-width:940px){
   .hero-grid{grid-template-columns:1fr;grid-template-areas:"copy" "die" "actions";gap:2rem;padding-top:6.5rem}
   .about-grid,.dec-grid,.edu-grid,.dbg-cols{grid-template-columns:1fr}
@@ -478,17 +523,20 @@ const STYLES = `
   .pc-body,.pcard.open .pc-body{transition:visibility 0s}
   .pc-chev{transition:none}
   .die{animation:none;transform:rotateX(52deg) rotateZ(0)}
+  .die-glow{animation:none;opacity:.97}
   .csp::after,.term-cursor,.hero .kicker::before{animation:none}
   .reveal{opacity:1;transform:none;transition:none}
   .skrow:hover .trace{animation:none}
   .flowdot,.spiflow{animation:none;display:none}
   .wave i{animation:none;transform:scaleY(.7)}
   .side-card:hover .apt{transform:none}
+  .rq-trigger{animation:none}
+  .rdrawer,.rdrawer-backdrop{transition:none}
 }
 
 /* ---------- print ---------- */
 @media print{
-  .bg-lattice,.hero-canvas,.nav,.overlay,.burger,.theme-btn,.skip,.rmodal-backdrop,.hero-fade,.die-scene{display:none!important}
+  .bg-lattice,.hero-canvas,.nav,.overlay,.burger,.theme-btn,.skip,.rmodal-backdrop,.hero-fade,.die-scene,.rq-trigger,.rdrawer-backdrop,.rdrawer{display:none!important}
   .yro{background:#fff!important;color:#111!important}
   .yro,.yro *{box-shadow:none!important;text-shadow:none!important;animation:none!important;transition:none!important}
   .section{padding:1.2rem 0;max-width:100%}
@@ -1323,6 +1371,105 @@ const JOURNEY = [
 ];
 
 /* ============================================================
+   RECRUITER NOTES - structured Q&A config
+   Edit this list to add/change questions - no UI code required.
+   Every answer must be traceable to the site's verified content
+   or something explicitly provided by Yash; if neither exists yet,
+   leave the value as null rather than guessing.
+   ============================================================ */
+const RECRUITER_NOTES = [
+  { section: "Availability", items: [
+    { q: "When can you start?", a: "Currently at OrVis Semi (Oct 2025 - present). A 30-day notice period applies once an offer is accepted." },
+  ] },
+  { section: "Work Authorization", items: [
+    { q: "Where are you eligible to work?", a: "India. No existing work authorization elsewhere - a role outside India would require sponsorship." },
+  ] },
+  { section: "Location & Work Mode", items: [
+    { q: "Where are you based, and onsite or remote?", a: "New Delhi, India. Open to relocation. Prefer onsite." },
+  ] },
+  { section: "Role Fit", items: [
+    { q: "What roles are you targeting?", a: "RTL / Digital Design, FPGA Engineering, and Physical Design - teams that tape out." },
+  ] },
+  { section: "Experience", items: [
+    { q: "What's the fastest way to evaluate you?", a: "Three systems validated on real hardware: a real-time FPGA imaging pipeline, a bare-metal SDXC controller, and a full Cadence RTL-to-GDSII flow on a 2×2 NoC. Full architecture, decisions, bugs, and proof are in the case studies above." },
+  ] },
+  { section: "Engineering Approach", items: [
+    { q: "How do you validate your work?", a: "No claim in the design record rests on simulation alone - ILA capture, counter readback, bench current, and live video are the authorities. Two failure theories were disproven by measurement, not assumed away." },
+  ] },
+  { section: "AI-Assisted Workflow", items: [
+    { q: "How do you use AI in your engineering process?", a: "To accelerate engineering thinking, not to replace engineering judgment: brainstorming architectures, debating trade-offs, exploring debugging hypotheses, and getting up to speed on unfamiliar protocols faster - not asking AI to write RTL. Every design decision is still validated through engineering fundamentals, simulation, and hardware testing." },
+  ] },
+];
+
+/* Focus is trapped and returned on close, background scroll is locked
+   while open, matching ResumeModal's pattern - see that component for
+   the rationale. Stays mounted (visibility toggle, not unmount) so the
+   slide transition can play in both directions. */
+function RecruiterDrawer({ open, onClose }) {
+  const dialogRef = useRef(null);
+  const closeRef = useRef(null);
+  const prevFocus = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    prevFocus.current = document.activeElement;
+    const prevBody = document.body.style.overflow, prevHtml = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    closeRef.current?.focus();
+    const onKey = (e) => {
+      if (e.key === "Escape") { onClose(); return; }
+      if (e.key === "Tab" && dialogRef.current) {
+        const f = dialogRef.current.querySelectorAll("a[href],button");
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevBody;
+      document.documentElement.style.overflow = prevHtml;
+      prevFocus.current?.focus?.();
+    };
+  }, [open, onClose]);
+  return (
+    <>
+      <div className={`rdrawer-backdrop ${open ? "open" : ""}`} onClick={onClose} aria-hidden="true" />
+      <div className={`rdrawer ${open ? "open" : ""}`} role="dialog" aria-modal="true" aria-label="Recruiter Notes" ref={dialogRef}>
+        <div className="rdrawer-head">
+          <div>
+            <h2>Recruiter Notes</h2>
+            <p>Everything you need before scheduling an interview.</p>
+          </div>
+          <button ref={closeRef} className="rdrawer-x" aria-label="Close recruiter notes" onClick={onClose}>×</button>
+        </div>
+        <div className="rdrawer-body">
+          {RECRUITER_NOTES.map((sec) => (
+            <div className="rq-section" key={sec.section}>
+              <div className="cs-label">{sec.section}</div>
+              <div className="rq-list">
+                {sec.items.map((it) => (
+                  <div className="dec" key={it.q}>
+                    <div className="dt">{it.q}</div>
+                    <div className="dd">{it.a}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="rdrawer-foot">
+          <a className="btn fill" href="mailto:yashrajojha07@gmail.com">Email</a>
+          <a className="btn" href="https://www.linkedin.com/in/yrjojha/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+          <a className="btn" href={RESUME_PDF} target="_blank" rel="noopener noreferrer">↓ Résumé</a>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
    APP
    ============================================================ */
 export default function App() {
@@ -1344,6 +1491,7 @@ export default function App() {
   };
   const [resumeOpen, setResumeOpen] = useState(false);
   const openResume = (e) => { e.preventDefault(); setResumeOpen(true); };
+  const [recruiterOpen, setRecruiterOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.style.background = light ? "#FFFFFF" : "#131314";
@@ -1379,6 +1527,15 @@ export default function App() {
     <div className={`yro${light ? " light" : ""}`}>
       <a className="skip" href="#main">Skip to content</a>
       <ResumeModal open={resumeOpen} onClose={() => setResumeOpen(false)} />
+      <RecruiterDrawer open={recruiterOpen} onClose={() => setRecruiterOpen(false)} />
+      <button
+        className="rq-trigger"
+        onClick={() => setRecruiterOpen(true)}
+        aria-haspopup="dialog"
+        aria-expanded={recruiterOpen}
+      >
+        <i aria-hidden="true" />Recruiter Notes
+      </button>
       <LatticeCanvas light={light} />
 
       {/* NAV */}
@@ -1439,6 +1596,7 @@ export default function App() {
               </div>
             </div>
             <div className="die-scene">
+              <div className="die-glow" aria-hidden="true" />
               <div className="die">
                 <div className="die-pins top">{Array.from({ length: 10 }).map((_, i) => <i key={i} />)}</div>
                 <div className="die-face">
@@ -1919,7 +2077,7 @@ export default function App() {
             <span className="eyebrow">07 - Contact</span>
             <h2>Let's tape something out.</h2>
             <div className="pill">📍 New Delhi, India - open to relocation</div>
-            <p className="sub">Open to full-time roles in RTL / Digital Design, FPGA Engineering, and Physical Design. Available immediately - the fastest way to evaluate me is the debug logs above.</p>
+            <p className="sub">Open to full-time roles in RTL / Digital Design, FPGA Engineering, and Physical Design. Currently at OrVis Semi, serving a 30-day notice period - the fastest way to evaluate me is the debug logs above.</p>
           </Reveal>
           <Reveal className="cc-grid" delay={120}>
             <a className="cc" href="mailto:yashrajojha07@gmail.com">
