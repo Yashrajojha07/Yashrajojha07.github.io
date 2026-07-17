@@ -485,6 +485,20 @@ const STYLES = `
   .wave i{animation:none;transform:scaleY(.7)}
   .side-card:hover .apt{transform:none}
 }
+
+/* ---------- print ---------- */
+@media print{
+  .bg-lattice,.hero-canvas,.nav,.overlay,.burger,.theme-btn,.skip,.rmodal-backdrop,.hero-fade,.die-scene{display:none!important}
+  .yro{background:#fff!important;color:#111!important}
+  .yro,.yro *{box-shadow:none!important;text-shadow:none!important;animation:none!important;transition:none!important}
+  .section{padding:1.2rem 0;max-width:100%}
+  .cs-wrap,.pcard,.edu-card,.csp,.side-card,.cc,.fig,.terminal,.dbg{border:1px solid #ccc!important;background:#fff!important;break-inside:avoid}
+  .pc-body,.pcard.open .pc-body{grid-template-rows:1fr!important;visibility:visible!important}
+  .pc-btn{display:none}
+  .dbg-detail{max-height:none!important}
+  a[href]::after{content:" (" attr(href) ")";font-size:.7em;color:#555}
+  a[href^="#"]::after{content:""}
+}
 `;
 
 /* ============================================================
@@ -1309,44 +1323,6 @@ const JOURNEY = [
 ];
 
 /* ============================================================
-   SEO / structured data (injected at mount)
-   ============================================================ */
-function useSeo() {
-  useEffect(() => {
-    document.title = "Yash Raj Ojha - RTL / FPGA / ASIC Design Engineer";
-    const metas = [
-      ["name", "description", "FPGA/RTL Engineer at OrVis Semi. Cadence CSP Scholar (top 1% nationally). Hardware-validated Verilog systems: FPGA-based real-time imaging pipeline with async-FIFO CDC, bare-metal SDXC controller, and a full RTL-to-GDSII flow on the Cadence toolchain."],
-      ["property", "og:title", "Yash Raj Ojha - RTL / FPGA / ASIC Design Engineer"],
-      ["property", "og:description", "Engineering case studies: FPGA-based real-time imaging pipeline, bare-metal SDXC controller, NoC RTL-to-GDSII. Hardware-first validation on Spartan-7."],
-      ["property", "og:type", "profile"],
-      ["name", "twitter:card", "summary_large_image"],
-      ["name", "twitter:title", "Yash Raj Ojha - RTL / FPGA / ASIC Design Engineer"],
-    ];
-    const created = [];
-    metas.forEach(([attr, key, content]) => {
-      let m = document.querySelector(`meta[${attr}="${key}"]`);
-      if (!m) { m = document.createElement("meta"); m.setAttribute(attr, key); document.head.appendChild(m); created.push(m); }
-      m.setAttribute("content", content);
-    });
-    const ld = document.createElement("script");
-    ld.type = "application/ld+json";
-    ld.textContent = JSON.stringify({
-      "@context": "https://schema.org", "@type": "Person",
-      name: "Yash Raj Ojha", jobTitle: "FPGA/RTL Engineer",
-      worksFor: { "@type": "Organization", name: "OrVis Semi" },
-      alumniOf: { "@type": "CollegeOrUniversity", name: "IIIT Delhi" },
-      award: ["Cadence CSP Scholar (top 1% ECE students nationally)", "Special Mention - Best Volunteer Award, IIIT-Delhi Summer Camp 2023"],
-      email: "mailto:yashrajojha07@gmail.com", telephone: "+91 8287260743",
-      address: { "@type": "PostalAddress", addressLocality: "New Delhi", addressCountry: "IN" },
-      sameAs: ["https://www.linkedin.com/in/yrjojha/", "https://github.com/yashrajojha07", "https://www.instagram.com/yrjverse"],
-      knowsAbout: ["RTL Design", "Verilog", "SystemVerilog", "FPGA", "ASIC", "Clock Domain Crossing", "Static Timing Analysis", "RTL-to-GDSII", "Cadence Genus", "Cadence Innovus", "Cadence Tempus"],
-    });
-    document.head.appendChild(ld); created.push(ld);
-    return () => created.forEach((el) => el.remove());
-  }, []);
-}
-
-/* ============================================================
    APP
    ============================================================ */
 export default function App() {
@@ -1368,7 +1344,6 @@ export default function App() {
   };
   const [resumeOpen, setResumeOpen] = useState(false);
   const openResume = (e) => { e.preventDefault(); setResumeOpen(true); };
-  useSeo();
 
   useEffect(() => {
     document.documentElement.style.background = light ? "#FFFFFF" : "#131314";
@@ -1387,8 +1362,8 @@ export default function App() {
     return () => removeEventListener("scroll", onScroll);
   }, []);
 
-  const navIds = ["about", "industry", "research", "skills", "journey", "contact"];
-  const navLabels = { "about": "About", "industry": "Industry", "research": "Research", "skills": "Skills", "journey": "Journey", "contact": "Contact" };
+  const navIds = ["about", "industry", "research", "skills", "education", "journey", "contact"];
+  const navLabels = { "about": "About", "industry": "Industry", "research": "Research", "skills": "Skills", "education": "Education", "journey": "Journey", "contact": "Contact" };
 
   useEffect(() => {
     const io = new IntersectionObserver((es) => {
@@ -1409,7 +1384,7 @@ export default function App() {
       {/* NAV */}
       <nav className={`nav ${scrolled ? "scrolled" : ""}`}>
         <div className="nav-in">
-          <a href="#top" className="mono-logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>YR<span className="dot">O</span></a>
+          <a href="#top" className="mono-logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Yrj<span className="dot">Ojha</span></a>
           <div className="nav-right">
             <ul className="nav-links">
               {navIds.map((n) => (
