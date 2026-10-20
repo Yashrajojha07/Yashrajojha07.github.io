@@ -1339,7 +1339,7 @@ const DIE_TIPS = { "RTL CORE": "RTL Design", DSP: "Fixed-Point DSP", CDC: "Clock
 
 /* journey photographs - served from /photos in the site's public dir */
 const PHOTOS = {
-  portrait: "/photos/portrait.jpg",
+  portrait: "/photos/portrait-v2.jpg",
   award: "/photos/best-volunteer-award-2023.jpg",
   keynote: "/photos/keynote-2025.jpg",
   convocation: "/photos/convocation-2025.jpg",
