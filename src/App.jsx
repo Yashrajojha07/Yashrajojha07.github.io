@@ -1324,7 +1324,7 @@ const SKILL_GROUPS = [
   { h: "Digital Design", items: [["FSM Design", "EXPERT"], ["Pipelining", "EXPERT"], ["SPI", "EXPERT"], ["UART", "EXPERT"], ["CDC (Clock Domain Crossing)", "PROFICIENT"], ["FIFO Design", "PROFICIENT"], ["Fixed-Point Arithmetic", "PROFICIENT"], ["I2C", "PROFICIENT"], ["AMBA (AXI, APB)", "PROFICIENT"], ["Low Power Design", "FAMILIAR"]] },
   { h: "Verification", items: [["Directed Testbenches", "PROFICIENT"], ["Functional Simulation", "PROFICIENT"], ["Formal Equivalence Checking", "PROFICIENT"]] },
   { h: "ASIC Flow & Tools", items: [["RTL-to-GDSII", "PROFICIENT"], ["Synthesis - Genus", "PROFICIENT"], ["STA - Tempus", "PROFICIENT"], ["Place & Route - Innovus", "PROFICIENT"], ["Clock Tree Synthesis", "PROFICIENT"], ["Xcelium", "PROFICIENT"], ["Conformal", "PROFICIENT"]] },
-  { h: "FPGA & Debug", items: [["Xilinx Vivado", "EXPERT"], ["Xilinx Spartan-7", "EXPERT"], ["Integrated Logic Analyzer (ILA)", "PROFICIENT"], ["Keysight DSO", "FAMILIAR"]] },
+  { h: "FPGA & Debug", items: [["Xilinx Vivado", "EXPERT"], ["Xilinx Spartan-7", "EXPERT"], ["Xilinx Artix-7", "PROFICIENT"], ["Integrated Logic Analyzer (ILA)", "PROFICIENT"], ["Keysight DSO", "FAMILIAR"]] },
 ];
 
 const DIE_BLOCKS = [
@@ -1590,9 +1590,9 @@ export default function App() {
               </div>
               <div className="hero-proof">
                 <div className="hp"><b>2.55 ns</b>timing closure · 90 nm</div>
-                <div className="hp"><b>100 MHz</b>pipeline on Spartan-7</div>
+                <div className="hp"><b>50 MHz</b>pixel pipeline on Artix-7</div>
                 <div className="hp"><b>1 CDC</b>point, by design</div>
-                <div className="hp"><b>11 bugs</b>root-caused on hardware</div>
+                <div className="hp"><b>11 bugs</b>debugged on hardware</div>
               </div>
             </div>
             <div className="die-scene">
@@ -1631,20 +1631,20 @@ export default function App() {
                 <span className="out">OrVis Semi (CMOS imaging)</span> <span className="dim">| Oct 2025 – Present</span>{"\n\n"}
                 <span className="cmd">cat education.txt</span>{"\n"}
                 <span className="out">B.Tech ECE | IIIT Delhi | 2021–2025</span>{"\n"}
-                <span className="hl">Cadence CSP Scholar (Top 1% nationally)</span>{"\n\n"}
-                <span className="cmd">grep -c "root-caused" debug.log</span>{"\n"}
+                <span className="hl">Cadence CSP Scholar (Top 1% of ECE students)</span>{"\n\n"}
+                <span className="cmd">grep -c "closed" debug.log</span>{"\n"}
                 <span className="out">11</span>{"\n\n"}
                 <span className="cmd"></span><span className="term-cursor" />
               </div>
             </Reveal>
             <Reveal className="about-prose" delay={120}>
-              <p>I design the logic that runs inside chips - and I don't call it done until it works on the bench. My Verilog closes timing at <span className="num">2.55 ns</span> through a full Cadence flow, and my FPGA pipelines stream real sensor data at <span className="num">100 MHz</span> into a host PC with zero software in the video path.</p>
+              <p>I design the logic that runs inside chips - and I don't call it done until it works on the bench. My Verilog closes timing at <span className="num">2.55 ns</span> through a full Cadence flow, and my FPGA pipelines stream real sensor data at a <span className="num">50 MHz</span> pixel clock into a host PC over USB 3.0 with zero software in the video path.</p>
               <p>The case studies below are written the way I work: <strong>problem, architecture, engineering decisions, the bugs I found, how I proved the fixes</strong>. Every claim traces to an ILA capture, a UART dump, a counter readback, or a bench current measurement - including two failure theories I disproved by measurement rather than assumed away.</p>
               <p>Targeting RTL / Digital Design / FPGA roles on teams that tape out.</p>
             </Reveal>
           </div>
           <Reveal className="statbar" delay={200}>
-            {[["3", "Systems hardware-validated"], ["2.55 ns", "WNS +814 ps · Genus 90 nm"], ["100 MHz", "Real-time pipeline clock"], ["0", "Soft-cores in any datapath"]].map((s) => (
+            {[["2", "FPGA systems hardware-validated"], ["2.55 ns", "WNS +814 ps · Genus 90 nm"], ["50 MHz", "Real-time pixel clock"], ["0", "Soft-cores in any datapath"]].map((s) => (
               <div className="stat" key={s[1]}><div className="v">{s[0]}</div><div className="l">{s[1]}</div></div>
             ))}
           </Reveal>
@@ -1665,13 +1665,13 @@ export default function App() {
             domain="Image Processing · CDC · Real-Time Streaming"
             title="FPGA-Based Real-Time Imaging Pipeline"
             role="Owned the full FPGA video path - demosaic, calibration, color conversion, the clock-domain crossing, and serialization to a hardware-fixed 8-bit bus - plus the debug campaign that made it stable."
-            impact="1284×968 live UVC video · exactly 1 CDC point · 5 bugs root-caused, 2 theories falsified on the bench"
+            impact="1284×968 live UVC video · exactly 1 CDC point · 5 bugs debugged and closed, 2 theories falsified on the bench"
             summary="Raw 12-bit Bayer in, standard UVC video out - plug-and-play in any host viewer. Demosaic, white balance, and color conversion all run at pixel rate in Verilog, across two asynchronous clock domains, against a USB firmware this design could not modify."
             tags={["Verilog", "Bilinear Demosaic", "Async FIFO / CDC", "BT.601 · YUV422", "Fixed-Point DSP", "UVC / FX3"]}
           >
           <div className="cs-wrap">
             <div className="cs-head">
-              <span className="cs-id">OrVis Semi · Industrial CMOS Image Sensor · Spartan-7 · Cypress FX3</span>
+              <span className="cs-id">OrVis Semi · Industrial CMOS Image Sensor · Artix-7 · Cypress FX3</span>
               <div className="cs-meta">
                 <div className="m">Active frame<b>1284 × 968</b></div>
                 <div className="m">Pixel clock<b>~50 MHz</b></div>
@@ -1725,7 +1725,7 @@ export default function App() {
                   <div className="ms"><b>5-stage</b><span>demosaic pipeline</span></div>
                   <div className="ms"><b>1</b><span>CDC point total</span></div>
                   <div className="ms"><b>Q12</b><span>fixed-point BT.601</span></div>
-                  <div className="ms"><b>5</b><span>bugs root-caused</span></div>
+                  <div className="ms"><b>5</b><span>bugs debugged and closed</span></div>
                   <div className="ms"><b>2</b><span>theories falsified</span></div>
                 </div>
                 <div className="tags" style={{ marginTop: "1.1rem" }}>{["Verilog", "Bilinear Demosaic", "Async FIFO / CDC", "BT.601 · YUV422", "Fixed-Point DSP", "FWFT", "UVC / FX3", "ILA", "Sensor Calibration"].map((t) => <span className="tag" key={t}>{t}</span>)}</div>
@@ -2003,7 +2003,7 @@ export default function App() {
             <Reveal className="csp" delay={120}>
               <span className="badge">◆ Cadence Design Systems</span>
               <div className="t">CSP Scholar</div>
-              <div className="d">Cadence Scholarship Program - awarded to the top 1% of ECE students nationally.</div>
+              <div className="d">Cadence Scholarship Program - awarded to the top 1% of ECE students.</div>
             </Reveal>
           </div>
           <div className="lead-grid">
