@@ -794,7 +794,7 @@ function CaseStudy({ id, org, orgTone = "ind", domain, title, role, impact, summ
 /* In-page resume viewer. Focus is moved into the dialog on open, trapped
    with Tab, and returned to the invoking button on close; Escape and
    backdrop clicks close; background scroll is locked while open. */
-const RESUME_PDF = "/resume/YASH_RAJ_IIIT-Delhi.pdf";
+const RESUME_PDF = "/resume/Yash_Raj_IIIT_Delhi.pdf";
 function ResumeModal({ open, onClose }) {
   const dialogRef = useRef(null);
   const closeRef = useRef(null);
@@ -828,9 +828,9 @@ function ResumeModal({ open, onClose }) {
     <div className="rmodal-backdrop" onClick={onClose}>
       <div className="rmodal" role="dialog" aria-modal="true" aria-label="Résumé - Yash Raj Ojha" ref={dialogRef} onClick={(e) => e.stopPropagation()}>
         <div className="rmodal-bar">
-          <span className="rmodal-title">YASH_RAJ_IIIT-Delhi.pdf</span>
+          <span className="rmodal-title">Yash_Raj_IIIT_Delhi.pdf</span>
           <div className="rmodal-actions">
-            <a className="btn rm-btn" href={RESUME_PDF} download="YASH_RAJ_IIIT-Delhi.pdf">↓ Download PDF</a>
+            <a className="btn rm-btn" href={RESUME_PDF} download="Yash_Raj_IIIT_Delhi.pdf">↓ Download PDF</a>
             <a className="btn rm-btn" href={RESUME_PDF} target="_blank" rel="noopener noreferrer">Open in New Tab ↗</a>
             <button ref={closeRef} className="rmodal-x" aria-label="Close résumé viewer" onClick={onClose}>×</button>
           </div>
